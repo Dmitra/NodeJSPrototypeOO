@@ -620,7 +620,7 @@ Array.from = $A;
     for (var i = 0, length = object.length >>> 0; i < length; i++) {
       if (i in object) {
         var result = iterator.call(context, object[i], i, object);
-				if (result) results.push(result);
+        if (result) results.push(result);
       }
       n++;
     }
