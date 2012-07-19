@@ -1,7 +1,7 @@
 var fs = require('fs'),
   vm = require('vm');
 
-var protoPath = './lang/';
+var protoPath = __dirname + '/lang/';
 
 //PrototypeJS files in load order
 var files = ['object.js', 'function.js', 'enumerable.js', 'array.js', 'string.js', 'number.js', 'regexp.js', 'date.js', 'class.js', 'range.js', 'hash.js', 'prototype.oo.js']
