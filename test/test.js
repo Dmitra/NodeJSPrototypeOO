@@ -1,6 +1,6 @@
 #!/usr/bin/env node
  
-require('./prototype.js');
+require('../prototype.js');
 require('./classes/Main.js')
 require('./classes/Child.js')
 
