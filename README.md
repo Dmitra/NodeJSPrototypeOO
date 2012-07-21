@@ -10,6 +10,7 @@ with few changes:
 
 * prototype.oo.js added
 * `Object.extend` now can recieve *falsy* values as **destination**
+* `Object.clone` return falsy values as is
 * `Array.select` method is now ruby like
 * `Array.diff`
 * `Array.compact` and `Array.without` uses `filter` instead of `select`

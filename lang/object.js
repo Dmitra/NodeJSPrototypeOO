@@ -86,7 +86,8 @@
    *  which implements Prototype's (much more complex) DOM extension mechanism.
   **/
   function extend(destination, source) {
-		if (!destination) destination = {};
+		if (!destination && source) destination = {};
+    if (!destination && !source) return destination;
     for (var property in source)
       destination[property] = source[property];
     return destination;
@@ -410,7 +411,8 @@
    *      // -> "magenta" (it's a shallow copy, so they share the array)
   **/
   function clone(object) {
-    return extend({ }, object);
+    if (object) return extend({}, object);
+    return object;
   }
 
   /**

@@ -52,6 +52,7 @@ var Hash = Class.create(Enumerable, (function() {
    **/
   function initialize(object) {
     this._object = Object.isHash(object) ? object.toObject() : Object.clone(object);
+    if (!object) this._object = {};
   }
 
   // Docs for #each even though technically it's implemented by Enumerable
@@ -261,15 +262,19 @@ var Hash = Class.create(Enumerable, (function() {
 
   /**
    * Returns object without properties shared with callee
+   * or false if no difference
    */
   function diff(object) {
     var result = {};
+    var diff = false;
     var self = this;
     object.keys().forEach(function(key){
       if (self._object[key] != object._object[key]){
         result[key] = object._object[key];
+        diff = true;
       }
     })
+    if (!diff) result = false;
     return result;
   }
 

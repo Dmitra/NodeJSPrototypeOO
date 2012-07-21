@@ -366,16 +366,21 @@ Array.from = $A;
    *  Array#diff(array) -> Array
    *  - array (Array): A collection of values.
    *  Returns an array containing items that is not present in callee array
+   *  or false if no difference
   **/
   function diff(array){
-    var diff = [];
+    var diff = false;
+    var result = [];
     this.forEach(function(n){ 
       if (!array.detect(function(o){
         return o == n;
       })){
-        diff.push[o]
+        result.push[o]
+        diff = true;
       }
     })
+    if (!diff) result = false;
+    return result;
   }
 
   /** alias of: Array#clone
