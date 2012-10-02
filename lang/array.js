@@ -365,7 +365,7 @@ Array.from = $A;
   /**
    *  Array#diff(array) -> Array
    *  - array (Array): A collection of values.
-   *  Returns an array containing items that is not present in callee array
+   *  Returns an array containing items that are not present in param array
    *  or false if no difference
   **/
   function diff(array){
@@ -375,7 +375,7 @@ Array.from = $A;
       if (!array.detect(function(o){
         return o == n;
       })){
-        result.push[o]
+        result.push(n);
         diff = true;
       }
     })
@@ -406,6 +406,10 @@ Array.from = $A;
   **/
   function size() {
     return this.length;
+  }
+
+  function isEmpty() {
+    return this.length > 0;
   }
 
   /** related to: Object.inspect
@@ -815,6 +819,7 @@ Array.from = $A;
     clone:     clone,
     toArray:   clone,
     size:      size,
+    isEmpty:   isEmpty,
     inspect:   inspect
   });
 
