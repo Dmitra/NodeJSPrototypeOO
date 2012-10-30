@@ -85,13 +85,107 @@
    *  Do not mistake this method with its quasi-namesake [[Element.extend]],
    *  which implements Prototype's (much more complex) DOM extension mechanism.
   **/
-  function extend(destination, source) {
-		if (!destination && source) destination = {};
-    if (!destination && !source) return destination;
-    for (var property in source)
-      destination[property] = source[property];
-    return destination;
+  function extend(){
+    var options, name, src, copy, copyIsArray, clone,
+      target = arguments[0] || {},
+      i = 1,
+      length = arguments.length,
+      deep = false;
+
+    // Handle a deep copy situation
+    if ( Type(target) == BOOLEAN_TYPE ) {
+      deep = target;
+      target = arguments[1] || {};
+      // skip the boolean and the target
+      i = 2;
+    }
+
+    // Handle case when target is a string or something (possible in deep copy)
+    if ( typeof target !== "object" && !(_toString.call(target) === FUNCTION_CLASS) ) {
+      target = {};
+    }
+
+    // extend new object if only one argument is passed
+    if ( length === i ) {
+      target = {};
+      --i;
+    }
+
+    for ( ; i < length; i++ ) {
+      // Only deal with non-null/undefined values
+      if ( (options = arguments[ i ]) != null ) {
+        // Extend the base object
+        for ( name in options ) {
+          src = target[ name ];
+          copy = options[ name ];
+
+          // Prevent never-ending loop
+          if ( target === copy ) {
+            continue;
+          }
+
+          // Recurse if we're merging plain objects or arrays
+          if ( deep && copy && ( Object.isPlainObject(copy) || (copyIsArray = Object.isArray(copy)) ) ) {
+            if ( copyIsArray ) {
+              copyIsArray = false;
+              clone = src && Object.isArray(src) ? src : [];
+
+            } else {
+              clone = src && Object.isPlainObject(src) ? src : {};
+            }
+
+            // Never move original objects, clone them
+            target[ name ] = Object.extend( deep, clone, copy );
+
+          // Don't bring in undefined values
+          } else if ( copy !== undefined ) {
+            target[ name ] = copy;
+          }
+        }
+      }
+    }
+
+    // Return the modified object
+    return target;
+
   }
+
+	function isPlainObject( obj ) {
+    hasOwn = Object.prototype.hasOwnProperty;
+		// Must be an Object.
+		// Because of IE, we also have to check the presence of the constructor property.
+		// Make sure that DOM nodes and window objects don't pass through, as well
+		if ( !obj || Type(obj) !== OBJECT_TYPE || obj.nodeType){
+			return false;
+		}
+
+		try {
+			// Not own constructor property must be Object
+			if ( obj.constructor &&
+				!hasOwn.call(obj, "constructor") &&
+				!hasOwn.call(obj.constructor.prototype, "isPrototypeOf") ) {
+				return false;
+			}
+		} catch ( e ) {
+			// IE8,9 Will throw exceptions on certain host objects #9897
+			return false;
+		}
+
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+
+		var key;
+		for ( key in obj ) {}
+
+		return key === undefined || hasOwn.call( obj, key );
+	}
+
+	function isEmptyObject( obj ) {
+		for ( var name in obj ) {
+			return false;
+		}
+		return true;
+	}
 
   /**
    *  Object.inspect(obj) -> String
@@ -410,9 +504,12 @@
    *      original.values[0];
    *      // -> "magenta" (it's a shallow copy, so they share the array)
   **/
-  function clone(object) {
-    if (object) return extend({}, object);
-    return object;
+  function clone(object, deep) {
+    if (Object.isArray(object)){
+      return object.each(function(i){i = Object.clone(i, true)})
+    } else if (object){
+      return extend(deep, {}, object);
+    } else return object;
   }
 
   /**
@@ -597,6 +694,10 @@
     return typeof object === "undefined";
   }
 
+  function isBoolean(object) {
+    return typeof object === "boolean";
+  }
+
   extend(Object, {
     extend:        extend,
     inspect:       inspect,
@@ -607,12 +708,15 @@
     values:        values,
     clone:         clone,
     isElement:     isElement,
+    isPlainObject: isPlainObject,
+    isEmptyObject: isEmptyObject,
     isArray:       isArray,
     isHash:        isHash,
     isFunction:    isFunction,
     isString:      isString,
     isNumber:      isNumber,
     isDate:        isDate,
-    isUndefined:   isUndefined
+    isUndefined:   isUndefined,
+    isBoolean:     isBoolean
   });
 })();

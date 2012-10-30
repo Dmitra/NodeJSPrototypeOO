@@ -402,6 +402,10 @@ var Hash = Class.create(Enumerable, (function() {
     return new Hash(this);
   }
 
+  function isEmpty() {
+    return this.keys().length == 0;
+  }
+
   return {
     initialize:             initialize,
     _each:                  _each,
@@ -419,7 +423,7 @@ var Hash = Class.create(Enumerable, (function() {
     toQueryString:          toQueryString,
     inspect:                inspect,
     toJSON:                 toObject,
-    clone:                  clone
+    isEmpty:                isEmpty
   };
 })());
 

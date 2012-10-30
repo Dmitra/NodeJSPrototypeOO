@@ -362,30 +362,42 @@ Array.from = $A;
     });
   }
 
-  /**
-   *  Array#diff(array) -> Array
-   *  - array (Array): A collection of values.
-   *  Returns an array containing items that are not present in param array
-   *  or false if no difference
-  **/
-  function diff(array){
-    var diff = false;
+  function substract(array, compare){
     var result = [];
-    this.forEach(function(n){ 
+    this.forEach(function(n){
+      compare = compare || function(a,b){return a == b}
       if (!array.detect(function(o){
-        return o == n;
+        return compare(o,n)
       })){
         result.push(n);
-        diff = true;
       }
     })
-    if (!diff) result = false;
     return result;
   }
 
-  /** alias of: Array#clone
-   *  Array#toArray() -> Array
+  /**
+   * Compares two array and returns uniq items from both
+   * self - array = [[+diff], [-diff]]
+   * @param Array array
+   * @param Function compare 
+   * @returns Array of two arrays
+   * first one contains uniq items from self
+   * second - uniq items from param array
   **/
+  function diff(array, compare){
+    return [this.substract(array, compare), array.substract(this, compare)];
+  }
+
+  /**
+   * @param Array diff [addition, privation]
+   * @returns Array merged with diff
+   */
+  function diffMerge(diff){
+    var addition = (diff && diff[0]) ? diff[0] : []
+    var privation = (diff && diff[1]) ? diff[1] : []
+    var self = this.concat(addition)
+    return this.without.apply(self, privation)
+  }
 
   /**
    *  Array#clone() -> Array
@@ -408,8 +420,11 @@ Array.from = $A;
     return this.length;
   }
 
+  /**
+   * @returns Boolean true if array has no items
+   */
   function isEmpty() {
-    return this.length > 0;
+    return this.length < 1;
   }
 
   /** related to: Object.inspect
@@ -815,7 +830,9 @@ Array.from = $A;
     reverse:   reverse,
     uniq:      uniq,
     intersect: intersect,
+    substract: substract,
     diff:      diff,
+    diffMerge: diffMerge,
     clone:     clone,
     toArray:   clone,
     size:      size,
